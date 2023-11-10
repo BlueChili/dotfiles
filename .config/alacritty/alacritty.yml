@@ -1,0 +1,93 @@
+env:
+  TERM: xterm-256color
+
+font:
+  size: 9
+  normal:
+    family: Noto Sans Mono
+
+selection:
+  semantic_escape_chars: ",│`|:\"' ()[]{}<>"
+  # When set to `true`, selected text will be copied to the primary clipboard.
+  save_to_clipboard: true
+
+url:
+  modifiers: Super
+
+live_config_reload: true
+
+# window:
+#   startup_mode: Fullscreen
+
+draw_bold_text_with_bright_colors: true
+
+key_bindings:
+  - { key: V, mods: Super, action: Paste }
+  - { key: C, mods: Super, action: Copy }
+  - { key: F, mods: Super, action: ToggleFullscreen }
+  - { key: Equals, mods: Super, action: IncreaseFontSize }
+  - { key: Minus, mods: Super, action: DecreaseFontSize }
+
+schemes:
+  cobalt: &cobalt
+    cursor:
+      text: '#fefff2'
+      cursor: '#f0cc09'
+
+    selection:
+      text: '#b5b5b5'
+      background: '#18354f'
+
+    primary:
+      background: '#132738'
+      foreground: '#ffffff'
+
+    normal:
+      black:   '#000000'
+      red:     '#ff0000'
+      green:   '#38de21'
+      yellow:  '#ffe50a'
+      blue:    '#1460d2'
+      magenta: '#ff005d'
+      cyan:    '#00bbbb'
+      white:   '#bbbbbb'
+
+    bright:
+      black:   '#555555'
+      red:     '#f40e17'
+      green:   '#3bd01d'
+      yellow:  '#edc809'
+      blue:    '#5555ff'
+      magenta: '#ff55ff'
+      cyan:    '#6ae3fa'
+      white:   '#ffffff'
+
+  gruvbox: &gruvbox  
+    primary:
+    # hard contrast: background = '#1d2021'
+      background: '#282828'
+    # soft contrast: background = '#32302f'
+      foreground: '#ebdbb2'
+
+    # Normal colors
+    normal:
+      black:   '#282828'
+      red:     '#cc241d'
+      green:   '#98971a'
+      yellow:  '#d79921'
+      blue:    '#458588'
+      magenta: '#b16286'
+      cyan:    '#689d6a'
+      white:   '#a89984'
+
+    # Bright colors
+    bright:
+      black:   '#928374'
+      red:     '#fb4934'
+      green:   '#b8bb26'
+      yellow:  '#fabd2f'
+      blue:    '#83a598'
+      magenta: '#d3869b'
+      cyan:    '#8ec07c'
+      white:   '#ebdbb2'
+colors: *gruvbox
