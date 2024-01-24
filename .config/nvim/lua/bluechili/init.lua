@@ -1,3 +1,4 @@
+require("bluechili.packer")
 require("bluechili.remap")
 require('bluechili.set')
 

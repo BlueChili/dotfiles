@@ -1,14 +1,18 @@
 local lsp = require('lsp-zero')
-local lspconfig = require('lspconfig')
+lsp.extend_lspconfig()
 
 lsp.preset('recommended')
 
-lsp.ensure_installed({
-	'tsserver',
-	'eslint',
+require('mason').setup({})
+require('mason-lspconfig').setup({
+  ensure_installed = { 'tsserver', 'eslint' },
+  handlers = {
+    lsp.default_setup,
+  },
 })
 
 local cmp = require('cmp')
+
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
 	['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
@@ -17,7 +21,7 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 	['<C-Space>'] = cmp.mapping.complete(),
 })
 
-lsp.setup_nvim_cmp({
+cmp.setup({
 	mapping = cmp_mappings
 })
 
@@ -36,5 +40,7 @@ lsp.on_attach(function(client, bufnr)
   vim.keymap.set("n", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
 end)
 
-lspconfig.tailwindcss.setup{}
 lsp.setup()
+
+require('lspconfig').tailwindcss.setup({})
+require('lspconfig').astro.setup({})
