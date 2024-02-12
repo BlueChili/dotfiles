@@ -19,3 +19,5 @@ vim.keymap.set('n', '<leader>gpu', ':Git push<CR>')
 vim.keymap.set('n', '<leader>gfa', ':Git add %<CR>')
 
 vim.keymap.set('n', '<CR>', ':nohlsearch<CR>')
+vim.keymap.set('n', '[q', ':cprev<CR>')
+vim.keymap.set('n', ']q', ':cnext<CR>')
