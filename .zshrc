@@ -120,9 +120,10 @@ alias upworkrice="yay --editmenu upwork"
 alias gcmsg="git commit -m"
 alias gst="git status"
 alias gd="git diff"
+alias gdw="git diff --word-diff"
 alias ga="git add"
 alias gp="git push"
-alias gcko="git checkout"
+alias gco="git checkout"
 alias gcko-="git checkout -"
 alias ipadr="ip address"
 alias wifidown="iwctl station wlan0 disconnect"
@@ -137,16 +138,10 @@ source /usr/share/fzf/key-bindings.zsh
 export FZF_DEFAULT_COMMAND='rg --files --no-hidden -i '
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 unset npm_config_prefix
-source /usr/share/nvm/init-nvm.sh
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-#export GEM_PATH="/home/sakura/.local/bin"
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
 
 # pnpm
 export PNPM_HOME="/home/sakura/.local/share/pnpm"
@@ -154,5 +149,10 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
 # pnpm end
 alias dotfiles-git="/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME"
+eval "$(pyenv virtualenv-init -)"
+

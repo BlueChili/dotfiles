@@ -7,10 +7,10 @@ autocmd WinLeave * setlocal nocursorline
 vim.cmd [[
 augroup HTMLFileType
 	autocmd!
-	autocmd FileType html setlocal tabstop=8 softtabstop=8 shiftwidth=8
+	autocmd FileType html setlocal tabstop=4 softtabstop=4 shiftwidth=4
     autocmd FileType html setlocal formatoptions+=t
     autocmd FileType html setlocal textwidth=110
-    autocmd BufRead,BufNewFile *.html setlocal tabstop=8 softtabstop=8 shiftwidth=8 expandtab
+    autocmd BufRead,BufNewFile *.html setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 augroup END
 ]]
 
