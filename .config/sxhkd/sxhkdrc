@@ -1,11 +1,14 @@
 RR0x1008ff13
 XF86AudioRaiseVolume
   pactl set-sink-volume @DEFAULT_SINK@ +3%
+#  pactl set-sink-volume 1 +3%
 # 0x1008ff11
 XF86AudioLowerVolume
   pactl set-sink-volume @DEFAULT_SINK@ -3%
+#  pactl set-sink-volume 1 -3%
 # 0x1008ff12
 XF86AudioMute
   pactl set-sink-mute @DEFAULT_SINK@ toggle
+#  pactl set-sink-mute 1 toggle
 XF86Tools
   systemctl suspend
