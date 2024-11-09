@@ -190,6 +190,11 @@ _G.packer_plugins = {
     path = "/home/sakura/.local/share/nvim/site/pack/packer/start/vim-astro",
     url = "https://github.com/wuelnerdotexe/vim-astro"
   },
+  ["vim-commentary"] = {
+    loaded = true,
+    path = "/home/sakura/.local/share/nvim/site/pack/packer/start/vim-commentary",
+    url = "https://github.com/tpope/vim-commentary"
+  },
   ["vim-fugitive"] = {
     loaded = true,
     path = "/home/sakura/.local/share/nvim/site/pack/packer/start/vim-fugitive",
@@ -204,6 +209,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/sakura/.local/share/nvim/site/pack/packer/start/vim-repeat",
     url = "https://github.com/tpope/vim-repeat"
+  },
+  ["vim-sleuth"] = {
+    loaded = true,
+    path = "/home/sakura/.local/share/nvim/site/pack/packer/start/vim-sleuth",
+    url = "https://github.com/tpope/vim-sleuth"
   },
   ["vim-surround"] = {
     loaded = true,

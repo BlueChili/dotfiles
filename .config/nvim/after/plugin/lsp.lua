@@ -5,7 +5,7 @@ lsp.preset('recommended')
 
 require('mason').setup({})
 require('mason-lspconfig').setup({
-  ensure_installed = { 'tsserver', 'eslint' },
+  ensure_installed = { 'ts_ls', 'eslint', 'astro', 'bufls', 'cssls', 'tailwindcss' },
   handlers = {
     lsp.default_setup,
   },
