@@ -19,6 +19,8 @@ return require('packer').startup(function(use)
         end
     })
 
+    use('folke/tokyonight.nvim')
+
     use('luisiacc/gruvbox-baby')
     use('morhetz/gruvbox')
     use('kenwheeler/glow-in-the-dark-gucci-shark-bites-vim')

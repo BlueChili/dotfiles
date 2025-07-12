@@ -38,6 +38,6 @@ vim.cmd [[
 augroup AstroFileType
 	autocmd!
     autocmd FileType astro setlocal formatoptions+=t
-    autocmd BufRead,BufNewFile *.astro setlocal tabstop=8 softtabstop=8 shiftwidth=8 expandtab
+    autocmd BufRead,BufNewFile *.astro setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 augroup END
 ]]

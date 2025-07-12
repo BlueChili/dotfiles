@@ -3,4 +3,4 @@ function ColorMyPencils(color)
 	vim.cmd.colorscheme(color)
 end
 
-ColorMyPencils()
+vim.cmd('colorscheme tokyonight-night')

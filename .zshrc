@@ -1,3 +1,5 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":$HOME/.zsh/completions:"* ]]; then export FPATH="$HOME/.zsh/completions:$FPATH"; fi
 # Path to your oh-my-zsh installation.
 ZSH=~/.oh-my-zsh
 
@@ -53,8 +55,9 @@ plugins=(docker git-prompt)
 
 # User configuration
 
-export PATH="/home/sakura/.npm-global/bin:/home/sakura/go/bin:$PATH"
-export PATH="$PATH:/home/sakura/Hubstaff"
+export PATH="$HOME/.npm-global/bin:$HOME/go/bin:$PATH"
+export PATH="$PATH:$HOME/Hubstaff"
+export PATH="$HOME/.local/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -108,12 +111,12 @@ bindkey '^e' edit-command-line
 
 export PROMPT='%F{green}%2~ %F{red}%(?..%? )%F{blue}$ %f'
 # export TERM=xterm-256color
-ZDOTDIR="/home/sakura/.config/zsh"
+ZDOTDIR="$HOME/.config/zsh"
 source $ZDOTDIR/.zshrc
 alias vim="nvim"
 alias dwmrice="cd ~/aur/dwm && nvim config.h && rm -rf dwm-* pkg src && makepkg -si --skipinteg"
 alias strice="cd ~/aur/st && nvim config.h && rm -rf *.tar.zst && makepkg -si"
-alias server_unironical_vultr="ssh root@unironical.vultr"
+#alias server_unironical_vultr="ssh root@unironical.vultr"
 # alias server_unironical_vultr="ssh root@unironical.vultr -t tmux attach"
 alias sxrice="pkill sxhkd && nvim ~/.config/sxhkd/sxhkdrc"
 alias upworkrice="yay --editmenu upwork"
@@ -128,7 +131,6 @@ alias gcko-="git checkout -"
 alias ipadr="ip address"
 alias wifidown="iwctl station wlan0 disconnect"
 alias wifiup="iwctl station wlan0 connect MORDOR"
-alias hubstaff="HubstaffClient.bin.x86_64"
 alias nvrice="cd ~/.config/nvim && nvim . && exit"
 alias dev="npm run dev"
 alias bdev="bun run dev"
@@ -143,8 +145,9 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+export PATH=/opt/google-cloud-cli/bin:$PATH
 # pnpm
-export PNPM_HOME="/home/sakura/.local/share/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -153,6 +156,23 @@ esac
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
-alias dotfiles-git="/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME"
+alias dotfiles="/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME"
 eval "$(pyenv virtualenv-init -)"
 
+export PATH="$PATH:/usr/lib/docker/cli-plugins"
+alias pivot_containers="docker-compose up database nats temporal nats-init localstack localstack-init temporal-init"
+alias pivot_backend="pnpm nx run-many -t serve -p visa friend blockhead messenger buzzbuzz facebox blobby"
+alias pivot_expo="pnpm nx serve pivot-expo"
+alias gclphoenix="gcloud compute ssh mjsync-machine-phoenix --project=sonoranroots --zone=us-west1-a"
+alias gclelfsight="gcloud compute ssh elfsight --project=sonoranroots --zone=us-west1-a"
+
+# bun completions
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+. "$HOME/.deno/env"
+# Initialize zsh completions (added by deno install script)
+autoload -Uz compinit
+compinit
