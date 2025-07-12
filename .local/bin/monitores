@@ -1,0 +1,2 @@
+#!/usr/bin/zsh
+xrandr --output DP1 --left-of HDMI1

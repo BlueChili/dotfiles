@@ -1,0 +1,5 @@
+#!/usr/bin/zsh
+
+sudo sed -i 2,3s/^n/#n/ /etc/resolv.conf
+
+sudo sed -i s/^#::/::/ /etc/hosts && sudo sed -i s/^net/#net/ /etc/sysctl.d/40-ipv6.conf && sudo sed -i s/^noipv6/#noipv6/ /etc/dhcpcd.conf && sudo systemctl restart systemd-sysctl.service && sudo systemctl restart dhcpcd.service

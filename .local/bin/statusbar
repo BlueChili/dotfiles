@@ -1,0 +1,24 @@
+#!/usr/bin/zsh
+
+# somedate='hi';
+while true; do
+  somedate=$(date "+%b %d %a %I:%M %p");
+  # ETHUSDTquote=$(curl -f --no-progress-meter "https://api.binance.com/api/v3/avgPrice?symbol=ETHUSDT" | awk -F\" '{printf "%1.0f", $6 }')
+  # ETHBTCquote=$(curl -f --no-progress-meter "https://api.binance.com/api/v3/avgPrice?symbol=ETHBTC" | awk -F\" '{printf "%1.5f", $6 }')
+  quote=$(curl -f --no-progress-meter "https://api.binance.com/api/v3/avgPrice?symbol=AVAXUSDT" 2>/dev/null | awk -F\" '{printf "%1.5f", $6 }')
+  if [[ -z "$quote" ]]; then
+    quote=$(curl -f --no-progress-meter "https://api.binance.us/api/v3/avgPrice?symbol=AVAXUSDT" 2>/dev/null | awk -F\" '{printf "%1.5f", $6 }')
+  fi
+
+  BTCquote=$(curl -f --no-progress-meter "https://api.binance.com/api/v3/avgPrice?symbol=BTCUSDT" 2>/dev/null | awk -F\" '{printf "%1.0f", $6 }')
+  if [[ -z "$BTCquote" ]]; then
+    BTCquote=$(curl -f --no-progress-meter "https://api.binance.us/api/v3/avgPrice?symbol=BTCUSDT" 2>/dev/null | awk -F\" '{printf "%1.0f", $6 }')
+  fi
+
+  temps=$(sensors | grep Core | awk '{print $3}' | awk -F . '{print $1"°C "}' | sed 'N;s/\n//')
+  # date "+%b %d %A %I:%M %p";
+  # output=$(echo ${temps} ${ETHUSDTquote} ${ETHBTCquote} ${BTCquote} ${quote} ${somedate});
+  output=$(echo ${temps} ${BTCquote} ${quote} ${somedate});
+  xsetroot -name $output;
+  sleep 2;
+done

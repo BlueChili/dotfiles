@@ -1,0 +1,2 @@
+#!/bin/zsh
+setxkbmap -option "caps:escape" -option "altwin:swap_alt_win" -layout us

@@ -156,7 +156,7 @@ esac
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
-alias dotfiles="/usr/bin/git --git-dir=$HOME/dotfiles --work-tree=$HOME"
+alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 eval "$(pyenv virtualenv-init -)"
 
 export PATH="$PATH:/usr/lib/docker/cli-plugins"

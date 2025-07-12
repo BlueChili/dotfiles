@@ -1,0 +1,4 @@
+#!/usr/bin/sh
+# xrandr --output HDMI1 --mode "1920x1080_60.00"
+# xrandr --output DP1 --mode "1920x1080_60.00" --left-of HDMI1
+xrandr --output HDMI1 --mode "1920x1080_60.00" --output DP1 --mode "1920x1080_60.00" --left-of HDMI1
