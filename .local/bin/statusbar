@@ -16,9 +16,11 @@ while true; do
   fi
 
   temps=$(sensors | grep Core | awk '{print $3}' | awk -F . '{print $1"°C "}' | sed 'N;s/\n//')
+
+  battery=$(cat /sys/class/power_supply/BAT0/capacity)
   # date "+%b %d %A %I:%M %p";
   # output=$(echo ${temps} ${ETHUSDTquote} ${ETHBTCquote} ${BTCquote} ${quote} ${somedate});
-  output=$(echo ${temps} ${BTCquote} ${quote} ${somedate});
+  output=$(echo ${temps} 🔋${battery}% ${BTCquote} ${quote} ${somedate});
   xsetroot -name $output;
   sleep 2;
 done

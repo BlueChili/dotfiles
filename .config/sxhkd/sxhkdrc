@@ -15,3 +15,8 @@ XF86AudioMute
 #  pactl set-sink-mute 0 toggle
 XF86Tools
   systemctl suspend
+
+XF86MonBrightnessUp
+  brightnessctl set +5%
+XF86MonBrightnessDown
+  brightnessctl set 5%-

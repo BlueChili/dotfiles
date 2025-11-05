@@ -165,6 +165,7 @@ alias pivot_backend="pnpm nx run-many -t serve -p visa friend blockhead messenge
 alias pivot_expo="pnpm nx serve pivot-expo"
 alias gclphoenix="gcloud compute ssh mjsync-machine-phoenix --project=sonoranroots --zone=us-west1-a"
 alias gclelfsight="gcloud compute ssh elfsight --project=sonoranroots --zone=us-west1-a"
+alias vim="nvim"
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
@@ -176,3 +177,5 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # Initialize zsh completions (added by deno install script)
 autoload -Uz compinit
 compinit
+
+alias sshme='eval $(ssh-agent) && ssh-add ~/.ssh/archiedesk'

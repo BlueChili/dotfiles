@@ -44,6 +44,33 @@ end)
 
 lsp.setup()
 
-require('lspconfig').volar.setup({})
-require('lspconfig').tailwindcss.setup({})
-require('lspconfig').astro.setup({})
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "vue" },
+  callback = function()
+    vim.lsp.start({ name = "volar" })
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "astro" },
+  callback = function()
+    vim.lsp.start({ name = "astro" })
+  end,
+})
+
+vim.lsp.config("tailwindcss", {})
+vim.lsp.start({ name =" tailwindcss" })
+
+-- vim.api.nvim_create_autocmd("FileType", {
+--   pattern = { "html", "css", "javascript", "typescript", "javascriptreact", "typescriptreact", "vue", "astro" },
+--   callback = function()
+--     local root = vim.fs.root(0, { "tailwind.config.js", "tailwind.config.ts", "postcss.config.js", "package.json" })
+--     if not root then return end
+
+--     vim.lsp.start({
+--       name = "tailwindcss",
+--       root_dir = root,
+--     })
+--   end,
+-- })
+
