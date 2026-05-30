@@ -21,3 +21,7 @@ vim.keymap.set('n', '<leader>gfa', ':Git add %<CR>')
 vim.keymap.set('n', '<CR>', ':nohlsearch<CR>')
 vim.keymap.set('n', '[q', ':cprev<CR>')
 vim.keymap.set('n', ']q', ':cnext<CR>')
+
+vim.keymap.set("n", "<leader>go", ":diffget //2<CR>", { desc = "Get ours (HEAD)" })
+vim.keymap.set("n", "<leader>gt", ":diffget //3<CR>", { desc = "Get theirs (incoming)" })
+vim.keymap.set("n", "<leader>gd", ":Gdiffsplit!<CR>", { desc = "Open 3-way diff" })

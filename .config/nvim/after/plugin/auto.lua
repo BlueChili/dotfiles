@@ -41,3 +41,12 @@ augroup AstroFileType
     autocmd BufRead,BufNewFile *.astro setlocal tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 augroup END
 ]]
+
+
+vim.cmd [[
+augroup SQLFileType
+	au FileType sql setl formatprg=/usr/local/bin/pg_format\ -
+augroup END
+]]
+
+
