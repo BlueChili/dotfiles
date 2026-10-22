@@ -112,7 +112,11 @@ bindkey '^e' edit-command-line
 export PROMPT='%F{green}%2~ %F{red}%(?..%? )%F{blue}$ %f'
 # export TERM=xterm-256color
 ZDOTDIR="$HOME/.config/zsh"
-source $ZDOTDIR/.zshrc
+
+if [[ -e $ZDOTDIR/.zshrc ]]; then
+  source $ZDOTDIR/.zshrc
+fi
+
 alias vim="nvim"
 alias dwmrice="cd ~/aur/dwm && nvim config.h && rm -rf dwm-* pkg src && makepkg -si --skipinteg"
 alias strice="cd ~/aur/st && nvim config.h && rm -rf *.tar.zst && makepkg -si"
@@ -135,8 +139,12 @@ alias nvrice="cd ~/.config/nvim && nvim . && exit"
 alias dev="npm run dev"
 alias bdev="bun run dev"
 alias bbuild="bun run build"
-source /usr/share/fzf/completion.zsh
-source /usr/share/fzf/key-bindings.zsh
+if [[ -e /usr/share/fzf/completion.zsh ]]; then
+  source /usr/share/fzf/completion.zsh
+fi
+if [[ -e /usr/share/fzf/key-bindings.zsh ]]; then
+  source /usr/share/fzf/key-bindings.zsh
+fi
 export FZF_DEFAULT_COMMAND='rg --files --no-hidden -i '
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 unset npm_config_prefix
@@ -153,11 +161,15 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+#
+if command -v pyenv &>/dev/null; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+fi
+
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
-eval "$(pyenv virtualenv-init -)"
 
 export PATH="$PATH:/usr/lib/docker/cli-plugins"
 alias pivot_containers="docker-compose up database nats temporal nats-init localstack localstack-init temporal-init"
@@ -173,7 +185,10 @@ alias vim="nvim"
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-. "$HOME/.deno/env"
+
+if command -v deno &>/dev/null; then
+  . "$HOME/.deno/env"
+fi
 # Initialize zsh completions (added by deno install script)
 autoload -Uz compinit
 compinit
