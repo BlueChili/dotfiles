@@ -1,0 +1,11 @@
+---
+description: Patterns regulating client to backend interaction
+globs: web/**/*
+alwaysApply: true
+---
+
+All new data fetch requests done to server must use Tanstack Query.
+
+Database state should not be synced to a store by default, as it is essentially server state and stores are meant for handling client side state, there are exceptions where manipulating server state and syncing to the client is an absolute requirement primarily to transform the server data on the client, while keeping track of the original server data is a necessity (see bill compare feature as reference to dissambiguate).
+
+Already existing hooks using fetch and the API fetch helpers should be left untouched unless explicity requested otherwise.

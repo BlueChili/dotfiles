@@ -1,0 +1,5 @@
+---
+description: unit test creation and edit
+alwaysApply: false
+---
+Use functions or services from the implementation instead of re-defining them in the test file

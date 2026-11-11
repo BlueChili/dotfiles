@@ -1,0 +1,124 @@
+---
+description: Convert home-experience mockups into Home dashboard React sections (SessionOverview structure, Tailwind-only)
+globs: web/src/pages/Dashboard/Home/**/*,web/public/mockups/home-experience/**/*
+alwaysApply: false
+---
+
+# Home dashboard — mockup → React conversion
+
+**When:** User asks to port `web/public/mockups/home-experience/` into the live Home dashboard (`web/src/pages/Dashboard/Home/`).
+
+**Do not** start conversion unless explicitly requested. This rule defines structure and styling standards only.
+
+## Source of truth
+
+| Layer | Location |
+| --- | --- |
+| Visual + interaction spec | `web/public/mockups/home-experience/` (`README.md`, `session-desk.js`, `dashboard-widgets.js`, HTML) |
+| Target implementation | `web/src/pages/Dashboard/Home/components/` |
+| Page shell | `web/src/pages/Dashboard/Home/index.tsx` |
+
+Read mockup README for section names, filters, sample-data boundaries, and a11y. Treat mockup JS as behavior spec, not code to paste.
+
+## Preferred section tree (canonical)
+
+Follow `SessionOverviewSection.tsx` and its children:
+
+```
+SectionWrapper                    → card chrome (border, shadow, spacing)
+  SectionHeadingWrapper + Heading → title row + collapse control
+  *Stats / *Summary / *Filters   → data blocks (hooks inside leaf)
+  *Timeline / *Content           → remaining section body
+```
+
+| File | Role |
+| --- | --- |
+| `SectionWrapper` | One white dashboard card; `section` + Tailwind (`bg-card`, `border-border`, `rounded-lg`, …) |
+| `SectionHeadingWrapper` | Header toolbar; collapse/expand uses `@/components/ui/button` |
+| `Heading` | Section title typography only; no fetch logic |
+| `SessionStats` | Calls `useStat()` (or section hook); maps rows to `StatBadge` |
+| `StatBadge` | Presentational stat cell; loader variant |
+| `SessionTimeline` | Body subtree (timeline, tables, charts) |
+
+**Section composer** (`*Section.tsx`) stays thin: compose wrappers + children, no `useStat` / API unless unavoidable.
+
+## Anti-pattern — current Legislative Stats block in `index.tsx`
+
+```tsx
+// ❌ BAD — page owns data + renders legacy shared widget inline
+const { sessionDay, billPosted, … } = useStat();
+{sectionId === 'stats' && (
+  <div className="bg-linear-to-b …">
+    <LegislativeStats legislature={sessionName} sessionDays={sessionDay} … />
+  </div>
+)}
+```
+
+Problems to avoid when replacing stats / other sections:
+
+- Page-level hook with many destructured fields passed as props
+- `LegislativeStats` in `components/ui/` as the home section implementation
+- Section markup + loading + gradient wrapper inside `renderSection` switch
+- Inline helpers (`QuickAccessCard`, `SectionHeader`) growing in `index.tsx` instead of `components/`
+
+```tsx
+// ✅ GOOD — page only mounts section; section owns hook
+{sectionId === 'stats' && <SessionOverviewSection />}
+```
+
+## `HomePage` responsibilities (keep narrow)
+
+Allowed in `index.tsx`:
+
+- Welcome header, Expand/Collapse All, Customize (`ColumnManager`)
+- Section registry (`defaultSections`), order/visibility persistence (`useColumnConfiguration`)
+- `renderSection` → render **one** `*Section` component per id
+- Collapse state keyed by section id (move into section when mockup parity needs local collapse)
+
+Not allowed for new homepage work:
+
+- New section UI trees or stat grids
+- Data hooks for a single dashboard card (except page-wide orchestration)
+- Copying mockup CSS into `index.css` or new `.css` files under `Home/`
+
+## Mockup CSS → Tailwind
+
+- **Do not** import `session-desk.css`, `dashboard-widgets.css`, etc. into the app.
+- **Do not** add homepage-specific rules to `index.css`; use utilities on components.
+- Map mockup tokens to existing Tailwind theme: `hubspot-text`, `hubspot-border`, `hubspot-background`, `hubspot-teal`, `text-nav`, `text-menu`, `card`, `muted`, `secondary`, `border-border`.
+- Prefer `@/components/ui/*` (`Button`, `Card` patterns, `cn()`) over new primitives.
+- Mockup `.card` ≈ `SectionWrapper` surface: `bg-white border border-hubspot-border rounded-lg shadow-sm p-4 sm:p-5` (adjust to match `SectionWrapper`).
+- Mockup `.desk-section-heading h2` ≈ `Heading` (`text-nav font-[650] tracking-nudge`).
+- Dense stat pills ≈ `StatBadge` pattern, not `LegislativeStats` layout.
+
+When a mockup rule has no utility equivalent, add **component-level** `className` strings; still no new global CSS file.
+
+## File placement
+
+- One mockup dashboard section → `components/<Name>Section.tsx` (+ siblings: `<Name>Stats.tsx`, `<Name>Timeline.tsx`, …).
+- Reusable outside Home → `web/src/components/` only if a second page needs it; default colocate under `Home/components/`.
+- Hooks: `web/src/hooks/` (e.g. `useStat`); section leaves call hooks, composers do not.
+
+## Architecture (inherits `frontend-patterns.mdc`)
+
+- Fetch/transform/state → hook
+- Section/leaf components → JSX + hook calls + Tailwind
+- `index.tsx` → composition + dashboard chrome only
+
+## Conversion checklist (per section)
+
+1. Identify mockup block in README + JS (e.g. Session Overview, Discovery row).
+2. Scaffold `*Section.tsx` mirroring `SessionOverviewSection` composition.
+3. Port styles from mockup CSS to Tailwind on the smallest leaf components.
+4. Wire real hooks where production data exists; keep mockup sample data only in stories/tests until wired.
+5. Replace inline `index.tsx` branch for that section with `<FooSection />`.
+6. Leave `web/public/mockups/home-experience/` unchanged unless user asks to sync demos.
+
+## Reference map (mockup → React target)
+
+| Mockup concept | Target component pattern |
+| --- | --- |
+| Session Overview card (stats + timeline) | `SessionOverviewSection` tree (extend, don’t duplicate in page) |
+| Legislative / desk KPI strip | `SessionStats` + `StatBadge` (not `LegislativeStats` on Home) |
+| Desk section heading + collapse | `SectionHeadingWrapper` + `Heading` |
+| Other dashboard sections (Bookmarks, Discovery, …) | New `*Section.tsx` siblings, same wrapper pattern |

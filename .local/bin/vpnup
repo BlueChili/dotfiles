@@ -1,5 +1,8 @@
 #!/usr/bin/zsh
 
+sudo sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sudo sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
 #sudo sed -i s/^::/#::/ /etc/hosts && sudo sed -i s/^#net/net/ /etc/sysctl.d/40-ipv6.conf && sudo sed -i s/^#noipv6/noipv6/ /etc/dhcpcd.conf && sudo systemctl restart systemd-sysctl.service && sudo systemctl restart dhcpcd.service && sudo openvpn --config archie1.ovpn
 
 sudo sed -i 2,3s/#// /etc/resolv.conf

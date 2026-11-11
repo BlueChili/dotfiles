@@ -1,0 +1,9 @@
+---
+description: Patterns regulating db interaction
+globs: backend/**/*
+alwaysApply: true
+---
+
+Use Prisma as primary database access mechanism, direct usage of the supabase client is deprecated
+
+After generating new supabase migrations, update `/backend/prisma/schema.prisma`

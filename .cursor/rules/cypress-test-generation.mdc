@@ -1,0 +1,8 @@
+---
+alwaysApply: true
+---
+first action of every test is signing in the interactive tests user using the programmatic login command:
+
+```TypeScript
+cy.login('e2e@skywolf.ai', 'TU!Password')
+```

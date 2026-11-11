@@ -55,9 +55,7 @@ plugins=(docker git-prompt)
 
 # User configuration
 
-export PATH="$HOME/.npm-global/bin:$HOME/go/bin:$PATH"
-export PATH="$PATH:$HOME/Hubstaff"
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/.npm-global/bin:$HOME/go/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -155,7 +153,7 @@ export NVM_DIR="$HOME/.nvm"
 
 export PATH=/opt/google-cloud-cli/bin:$PATH
 # pnpm
-export PNPM_HOME='/Users/bluechili/.local/share/pnpm'
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   ":$PNPM_HOME/bin:"*) ;;
   *) export PATH="$PNPM_HOME/bin:$PATH" ;;

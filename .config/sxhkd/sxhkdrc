@@ -20,3 +20,16 @@ XF86MonBrightnessUp
   brightnessctl set +5%
 XF86MonBrightnessDown
   brightnessctl set 5%-
+super + control + Down
+  maim -s | tee ~/Pictures/screenshots/screenshot-$(date +%s).png | xclip -selection clipboard -t image/png
+
+# XF86AudioNext
+#   maim -s | tee ~/Pictures/screenshots/screenshot-$(date +%s).png | xclip -selection clipboard -t image/png
+  # xfce4-screenshooter
+  # maim -s | xclip -selection clipboard -t image/png
+
+super + XF86PowerOff
+  systemctl suspend
+
+control + shift + super + space
+  maim -s | xclip -selection clipboard -t image/png
