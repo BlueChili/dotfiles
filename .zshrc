@@ -155,10 +155,10 @@ export NVM_DIR="$HOME/.nvm"
 
 export PATH=/opt/google-cloud-cli/bin:$PATH
 # pnpm
-export PNPM_HOME="$HOME/.local/share/pnpm"
+export PNPM_HOME='/Users/bluechili/.local/share/pnpm'
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+  ":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
 #
@@ -194,3 +194,5 @@ autoload -Uz compinit
 compinit
 
 alias sshme='eval $(ssh-agent) && ssh-add ~/.ssh/archiedesk'
+
+[[ $OSTYPE == darwin* && -t 0 ]] && export GPG_TTY="$(tty)"
