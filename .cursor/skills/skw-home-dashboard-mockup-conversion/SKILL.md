@@ -121,15 +121,106 @@ Not allowed for new homepage work:
 
 ## Mockup CSS → Tailwind
 
-- **Do not** import `session-desk.css`, `dashboard-widgets.css`, etc. into the app.
-- **Do not** add homepage-specific rules to `index.css`; use utilities on components.
-- Map mockup tokens to existing Tailwind theme: `hubspot-text`, `hubspot-border`, `hubspot-background`, `hubspot-teal`, `text-nav`, `text-menu`, `card`, `muted`, `secondary`, `border-border`.
-- Prefer `@/components/ui/*` (`Button`, `Card` patterns, `cn()`) over new primitives.
-- Mockup `.card` ≈ `SectionWrapper` surface: `bg-white border border-hubspot-border rounded-lg shadow-sm p-4 sm:p-5` (adjust to match `SectionWrapper`).
-- Mockup `.desk-section-heading h2` ≈ `Heading` (`text-nav font-[650] tracking-nudge`).
-- Dense stat pills ≈ `StatBadge` pattern, not `LegislativeStats` layout.
+**Do not** import `session-desk.css`, `dashboard-widgets.css`, or any other mockup stylesheet. **Do not** add homepage rules to `index.css`. Resolve the computed style for each node at each viewport, then put only the winning declarations on the component that owns that node.
 
-When a mockup rule has no utility equivalent, add **component-level** `className` strings; still no new global CSS file.
+A class block in isolation is not the style. Descendants inherit from ancestors, ancestor selectors restyle children, and a later stylesheet overrides an earlier one.
+
+### Stylesheet order
+
+`index.html` loads, in this order:
+
+1. `../bill-experience/styles.css` — `:root` tokens (`--ink: #283f50`, `--line: #e4e9ee`, …)
+2. `dashboard.css`
+3. `session-desk.css` — `.home-demo` replaces those tokens (`--ink: #33475b`, `--line: #e5e8eb`, `--muted: #64748b`, `--teal`, `--bg`) and sets the font stack
+4. `session-workspace.css`
+5. `app-shell.css`
+6. `dashboard-widgets.css`
+7. `bills-demo.css`
+8. `dashboard-customization.css`
+
+At equal specificity, the later file wins. Read `var(--ink)`, `var(--line)`, `var(--muted)`, and `var(--teal)` from the ancestor that sets them (`.home-demo`, not `:root`), then map the computed value onto the existing theme: `hubspot-text`, `hubspot-border`, `hubspot-background`, `hubspot-teal`, `text-nav`, `text-menu`, `card`, `muted`, `secondary`, `border-border`.
+
+### Walk parent → child
+
+For each element being ported, collect every matching rule from the outermost ancestor inward:
+
+1. Inherited properties and custom properties on ancestors (`color`, `font`, `line-height`, `letter-spacing`, `--*`).
+2. Descendant and child selectors that target this node (`.desk-session .session-stat`, `.desk-section-heading > small`, `.desk-view .desk-section-heading h2`).
+3. The element's own class.
+4. Later rules and state (`:hover`, `:focus-visible`, `.is-today`, `[aria-current]`). Then repeat the walk for each `@media` viewport — a query does not erase the wider-screen winners.
+
+Port the winner for each property. Example — Session Overview stats:
+
+| Rule | Declares | Inside `.desk-session` |
+| --- | --- | --- |
+| `.session-stat` | `padding: 10px 12px` | loses to `.desk-session .session-stat` → `padding: 6px 10px` |
+| `.session-stat strong` | `font-size: 24px` | loses to `.desk-session .session-stat strong` → `font-size: 22px; margin-top: 2px` |
+| `.desk-section-heading` | `margin-bottom: 17px` | loses to `.desk-session .desk-section-heading` → `margin-bottom: 8px` |
+
+Put `6px 10px` and `22px` on the stat cell, not the earlier base rule. Same for any other section: if the node sits under `.home-demo`, `.desk-view`, or `.desk-session`, those ancestor rules are in scope.
+
+### Where the utility goes
+
+- Parent layout and inherited type (`display`, `gap`, `color`, font stack, custom properties) → the parent `className` (`SectionWrapper`, heading row). Children inherit; do not restate the same computed value on every leaf.
+- A descendant selector's winning properties → the child component, not the parent.
+- A parent rule that only paints one element (`h2`, `small`, `strong`, `> span`) → that child's `className`. No global element CSS.
+
+### Preserve each viewport
+
+The unscoped rule is only the winner above the first matching breakpoint. A `max-width` block does not beat a more specific ancestor: `.desk-session .session-stat strong` (`22px`) still wins over `.session-stat strong` (`25px`) inside `max-width: 740px`.
+
+Mockup queries are desktop-first `max-width`, plus `min-width: 1600px` on the shell and `prefers-reduced-motion`. Resolve those ranges first. The utilities you write are mobile-first — see below. Do not leave `max-*` in the ported `className`.
+
+Section widths: `1250px`, `1200px`, `1100px`, `1023px`, `740px`, `600px`. Shell-only: `1023px`, `640px`, `min-width: 1600px`. Leave the production app shell alone unless that chrome is part of the requested port.
+
+Keep the behavior, not just the column count:
+
+- Column steps. `.desk-view .session-stat-grid` is 7 columns, then 4 at `≤1200px`, then 2 at `≤740px`. `.home-demo .dashboard-summary-widgets` is 3 columns — the later rule in `dashboard-widgets.css` beats the 2-column rule in `session-workspace.css` — and 1 column at `≤1023px`.
+- Divider direction when a row stacks. At `≤1023px`, discovery and tracked summaries drop `border-left` and the following sibling gets `border-top`. Port the parent grid and the child border.
+- Scroll instead of wrap, including rules that have no `@media`. The schedule week (`repeat(7, minmax(145px, 1fr))` inside `.schedule-week-scroll`), the session timeline (`.session-progress-scroll`), and tables (`min-width: 850px` inside `.new-bills-table-scroll`) scroll horizontally at every width. At `≤740px`, `.week-calendar-grid.is-week` becomes `repeat(7, 500px)` inside that scroll container.
+- Heading and filter stacks (`flex-direction: column`, `width: 100%`, `align-items: flex-start`) at `740px` and `600px`.
+- Motion. Do not copy the universal `prefers-reduced-motion` rule into `index.css`. If the ported component adds a transition, gate it with `motion-reduce:`.
+
+### Rewrite `max-width` to mobile-first
+
+Once each range has a winner, invert desktop-first queries. Unprefixed utilities are the narrowest range. Wider ranges add `min-*` utilities. Do not emit `max-*`.
+
+For each property:
+
+1. Order the ranges narrow → wide.
+2. Unprefixed class = the winner in the narrowest range, after specificity. A `max-width` declaration that loses to an ancestor is not the base.
+3. Each wider range that changes the value steps up at one pixel above the `max-width` it leaves (`max-width: 740px` covers 0–740; the next band starts at 741).
+4. Snap that step to a default Tailwind screen when the screen is within 80px of the query (inclusive). This app does not override the defaults: `sm` 640, `md` 768, `lg` 1024, `xl` 1280, `2xl` 1536. Nearest screen for the mockup queries: `600`/`640` → `sm`, `740` → `md`, `1023`/`1100` → `lg`, `1200`/`1250` → `xl`, `1600` → `2xl`.
+5. If two queries on the same property both fall within 80px of one screen and their winners differ, snap only the closer query. Leave the other as `min-[query+1px]:` so the bands do not collapse. `1023` beats `1100` for `lg`; `1250` beats `1200` for `xl`.
+6. When the narrow rule adds a property the wide rule does not have, reset it on the next band (`border-t` below `lg`, `lg:border-t-0`).
+7. Omit a variant that repeats the same computed value.
+8. A source `min-width` query is already mobile-first; snap it with the same 80px rule. `prefers-reduced-motion` stays `motion-reduce:`. Outside 80px, use `min-[query+1px]:`. Do not invent new `--breakpoint-*` tokens.
+
+Session stat grid, winners 2 / 4 / 7. `740` is 28px from `md`; `1200` is 80px from `xl`:
+
+```
+grid-cols-2 md:grid-cols-4 xl:grid-cols-7
+```
+
+Discovery summaries, 1 column through 1023px and 3 above:
+
+```
+grid-cols-1 lg:grid-cols-3
+```
+
+Stacked divider through 1023px, vertical rule from 1024px:
+
+```
+border-t border-l-0 lg:border-t-0 lg:border-l
+```
+
+Prefer `@/components/ui/*` (`Button`, `Card` patterns, `cn()`) over new primitives.
+
+- Mockup `.home-demo .card` (white surface, `--line` border, 8px radius, light shadow) ≈ `SectionWrapper`: `bg-white border border-hubspot-border rounded-lg shadow-sm p-4 sm:p-5` (adjust to the wrapper that already exists).
+- Mockup `.desk-view .desk-section-heading h2` (`font-size: 15px; font-weight: 650; letter-spacing: -.2px`), after the `.desk-session` margin override on the heading row ≈ `Heading` (`text-nav font-[650] tracking-nudge`).
+- Dense stat pills ≈ `StatBadge`, using the `.desk-session .session-stat` winners, not `LegislativeStats` and not the unscoped `.session-stat` padding.
+
+When a winning declaration has no utility, add a **component-level** arbitrary value on that node. Still no new global CSS file.
 
 ## File placement
 
