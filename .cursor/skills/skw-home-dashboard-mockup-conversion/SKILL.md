@@ -5,7 +5,8 @@ description: >-
   sections using the SessionOverview structure and Tailwind utilities only.
   Use when the user asks to port web/public/mockups/home-experience into
   web/src/pages/Dashboard/Home, or mentions Home dashboard mockup conversion,
-  SessionOverviewSection, or Tailwind-only homepage sections.
+  SessionOverviewSection, SectionHeadingWrapper superseding SectionHeader,
+  or Tailwind-only homepage sections.
 ---
 
 # Home dashboard — mockup → React conversion
@@ -46,6 +47,38 @@ SectionWrapper                    → card chrome (border, shadow, spacing)
 
 **Section composer** (`*Section.tsx`) stays thin: compose wrappers + children, no `useStat` / API unless unavoidable.
 
+## Heading supersession (replaces page `SectionHeader`)
+
+Converted sections **own** title + collapse in the card. Page-level `SectionHeader` (icon, chevron, `defaultSections.label`) is **legacy** — remove it for that `sectionId` when the new section ships.
+
+| Layer | Responsibility |
+| --- | --- |
+| `Heading` | Visible `h2` + mockup title typography (`text-nav`, `font-[650]`, …) |
+| `SectionHeadingWrapper` | Title row chrome + collapse/expand control (mockup desk-section-heading toolbar) |
+| `*Section.tsx` | Pairs wrapper + heading; title string lives here (may differ from ColumnManager label) |
+| `index.tsx` `SectionHeader` | **Do not render** for ids already using the wrapper combo |
+
+**Collapse:** Mockup parity puts toggle on `SectionHeadingWrapper`, not the old chevron header. Wire `aria-expanded`, `aria-label`, and body visibility inside the section (local state or props from page `openSections` / Expand–Collapse All when coordinated).
+
+```tsx
+// ❌ BAD — new card header + old page header (duplicate title, two toggles)
+{sectionId === 'stats' && openSections.has(sectionId) ? <SessionOverviewSection /> : null}
+<SectionHeader title={section.label} isOpen={…} onToggle={…} />
+{openSections.has(sectionId) && (/* legacy body or second copy of section */)}
+```
+
+```tsx
+// ✅ GOOD — section is full card; page only mounts it in the registry slot
+{sectionId === 'stats' && <SessionOverviewSection />}
+```
+
+When converting `bookmarks`, `quickAccess`, etc.:
+
+1. Add `SectionHeadingWrapper` + `Heading` inside `*Section.tsx` (match mockup section name from README/JS).
+2. Drop `SectionHeader` + outer `mb-6` wrapper branch for that id in `renderSection`.
+3. Keep `defaultSections[].label` for **Customize / ColumnManager** only unless product wants labels unified.
+4. Sections not yet converted keep `SectionHeader` until their `*Section` includes the heading pair.
+
 ## Anti-pattern — current Legislative Stats block in `index.tsx`
 
 ```tsx
@@ -64,6 +97,7 @@ Problems to avoid when replacing stats / other sections:
 - `LegislativeStats` in `components/ui/` as the home section implementation
 - Section markup + loading + gradient wrapper inside `renderSection` switch
 - Inline helpers (`QuickAccessCard`, `SectionHeader`) growing in `index.tsx` instead of `components/`
+- `SectionHeader` left in place after adding `SectionHeadingWrapper` + `Heading` inside the new section (double heading)
 
 ```tsx
 // ✅ GOOD — page only mounts section; section owns hook
@@ -76,8 +110,8 @@ Allowed in `index.tsx`:
 
 - Welcome header, Expand/Collapse All, Customize (`ColumnManager`)
 - Section registry (`defaultSections`), order/visibility persistence (`useColumnConfiguration`)
-- `renderSection` → render **one** `*Section` component per id
-- Collapse state keyed by section id (move into section when mockup parity needs local collapse)
+- `renderSection` → render **one** `*Section` component per id (no parallel `SectionHeader` for converted ids)
+- Collapse state keyed by section id; for converted sections, prefer driving `SectionHeadingWrapper` (lift state only if Expand/Collapse All must stay page-level)
 
 Not allowed for new homepage work:
 
@@ -109,14 +143,40 @@ When a mockup rule has no utility equivalent, add **component-level** `className
 - Section/leaf components → JSX + hook calls + Tailwind
 - `index.tsx` → composition + dashboard chrome only
 
+## Module exports (prefer named)
+
+**New** Home dashboard components from mockup conversion → **named exports**, not `export default`.
+
+| Rule | Detail |
+| --- | --- |
+| Define | `export function SessionOverviewSection() { … }` (name matches filename) |
+| Import | `import { SessionOverviewSection } from './components/SessionOverviewSection'` |
+| Barrel | Optional `components/index.ts` re-exports; still named only |
+| Existing files | Many siblings still `export default` — leave until you edit that file; then convert file + its importers in same change |
+
+Why: stable names in imports, better refactor/search, consistent with preferred app patterns for new UI.
+
+```tsx
+// ❌ BAD — new scaffold
+export default function DiscoverySection() { … }
+import DiscoverySection from './components/DiscoverySection';
+
+// ✅ GOOD
+export function DiscoverySection() { … }
+import { DiscoverySection } from './components/DiscoverySection';
+```
+
+`HomePage` in `index.tsx` may stay a named page export (`export function HomePage`) as today; section leaves under `components/` follow named-export rule when added or touched.
+
 ## Conversion checklist (per section)
 
 1. Identify mockup block in README + JS (e.g. Session Overview, Discovery row).
-2. Scaffold `*Section.tsx` mirroring `SessionOverviewSection` composition.
-3. Port styles from mockup CSS to Tailwind on the smallest leaf components.
-4. Wire real hooks where production data exists; keep mockup sample data only in stories/tests until wired.
-5. Replace inline `index.tsx` branch for that section with `<FooSection />`.
-6. Leave `web/public/mockups/home-experience/` unchanged unless user asks to sync demos.
+2. Scaffold `*Section.tsx` mirroring `SessionOverviewSection` composition (`SectionWrapper` → `SectionHeadingWrapper` + `Heading` → body leaves); use **named exports** for new files.
+3. Remove page `SectionHeader` (and redundant open guard wrapper) for that id so the new heading pair is the only section title + collapse UI.
+4. Port styles from mockup CSS to Tailwind on the smallest leaf components.
+5. Wire real hooks where production data exists; keep mockup sample data only in stories/tests until wired.
+6. Replace inline `index.tsx` branch for that section with `<FooSection />` only (no legacy header row).
+7. Leave `web/public/mockups/home-experience/` unchanged unless user asks to sync demos.
 
 ## Reference map (mockup → React target)
 
@@ -124,5 +184,5 @@ When a mockup rule has no utility equivalent, add **component-level** `className
 | --- | --- |
 | Session Overview card (stats + timeline) | `SessionOverviewSection` tree (extend, don’t duplicate in page) |
 | Legislative / desk KPI strip | `SessionStats` + `StatBadge` (not `LegislativeStats` on Home) |
-| Desk section heading + collapse | `SectionHeadingWrapper` + `Heading` |
+| Desk section heading + collapse | `SectionHeadingWrapper` + `Heading` (replaces `SectionHeader` in `index.tsx` for that section) |
 | Other dashboard sections (Bookmarks, Discovery, …) | New `*Section.tsx` siblings, same wrapper pattern |
