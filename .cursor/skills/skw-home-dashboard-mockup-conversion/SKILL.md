@@ -1,14 +1,18 @@
 ---
-description: Convert home-experience mockups into Home dashboard React sections (SessionOverview structure, Tailwind-only), skw Skywolf
-globs: web/src/pages/Dashboard/Home/**/*,web/public/mockups/home-experience/**/*
-alwaysApply: false
+name: skw-home-dashboard-mockup-conversion
+description: >-
+  Converts Skywolf (skw) home-experience mockups into Home dashboard React
+  sections using the SessionOverview structure and Tailwind utilities only.
+  Use when the user asks to port web/public/mockups/home-experience into
+  web/src/pages/Dashboard/Home, or mentions Home dashboard mockup conversion,
+  SessionOverviewSection, or Tailwind-only homepage sections.
 ---
 
 # Home dashboard — mockup → React conversion
 
 **When:** User asks to port `web/public/mockups/home-experience/` into the live Home dashboard (`web/src/pages/Dashboard/Home/`).
 
-**Do not** start conversion unless explicitly requested. This rule defines structure and styling standards only.
+**Do not** start conversion unless explicitly requested. This skill defines structure and styling standards only.
 
 ## Source of truth
 
