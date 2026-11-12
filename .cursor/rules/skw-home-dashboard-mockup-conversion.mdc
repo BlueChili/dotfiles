@@ -1,5 +1,5 @@
 ---
-description: Convert home-experience mockups into Home dashboard React sections (SessionOverview structure, Tailwind-only)
+description: Convert home-experience mockups into Home dashboard React sections (SessionOverview structure, Tailwind-only), skw Skywolf
 globs: web/src/pages/Dashboard/Home/**/*,web/public/mockups/home-experience/**/*
 alwaysApply: false
 ---

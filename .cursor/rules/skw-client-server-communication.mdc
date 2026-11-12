@@ -1,5 +1,5 @@
 ---
-description: Patterns regulating client to backend interaction
+description: Patterns regulating client to backend interaction, skw Skywolf
 globs: web/**/*
 alwaysApply: true
 ---

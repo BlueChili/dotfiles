@@ -1,5 +1,5 @@
 ---
-description: Patterns regulating db interaction
+description: Patterns regulating db interaction, skw Skywolf
 globs: backend/**/*
 alwaysApply: true
 ---

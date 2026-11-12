@@ -1,4 +1,5 @@
 ---
+description: skw, Skywolf, cypress tests
 alwaysApply: true
 ---
 first action of every test is signing in the interactive tests user using the programmatic login command:
